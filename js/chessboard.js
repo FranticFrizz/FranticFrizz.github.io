@@ -854,33 +854,19 @@ var Chessboard = class Chessboard {
         }, 500);
         
         
-/*
+
         $.ajax({
-            url: $SCRIPT_ROOT + '/_make_move',
+            url: 'http://52.79.61.17:8080/users/chess',
             type: 'POST',
-            data: player_data,
-            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify({name: "asdsfasdf",}),
+            contentType: 'application/json',
             dataType: 'json',
             async: true,
             success: function (rdata) { // Move piece of computer
-                if (document.getElementById(rdata.destID).hasChildNodes())
-                {
-                    document.getElementById(rdata.destID).children[0].remove();
-                    document.getElementById(rdata.destID).appendChild(document.getElementById(rdata.sourceID).children[0]);
-                }
-                else {
-                    document.getElementById(rdata.destID).appendChild(document.getElementById(rdata.sourceID).children[0]);
-                }
-                self.currentTurn = 'white'; //Computer is always black
-                $('#timerWindow').removeClass('blackTimer');
-                self.terminalT.innerHTML = self.currentTurn.toUpperCase() + ' TURN';
-
+                console.log(rdata);
             }
-
-
-
         });
-*/
+
     }
 
 }
