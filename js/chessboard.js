@@ -855,17 +855,15 @@ var Chessboard = class Chessboard {
         
         
 
-        $.ajax({
-            url: 'http://52.79.61.17:8080/users/chess',
-            type: 'POST',
-            data: JSON.stringify({name: "asdsfasdf",}),
-            contentType: 'application/json',
-            dataType: 'json',
-            async: true,
-            success: function (rdata) { // Move piece of computer
-                console.log(rdata);
-            }
-        });
+        fetch("http://52.79.61.17:8080/users/chess", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    name: "asdsfasdf",
+  }),
+}).then((response) => console.log(response.json()));
 
     }
 
