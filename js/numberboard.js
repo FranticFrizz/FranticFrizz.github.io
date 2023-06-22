@@ -10,17 +10,17 @@ var Chessboard = class Chessboard {
 
         this.initialPos = {
             "white": {
-                "trap": ["a1"],
-                "king": ["b1"],
-                "pawn": ["c1"],
-                "bishop": ["a2"],
-                "rook": ["c2"]
+                "num1": ["a1"],
+                "num2": ["b1"],
+                "num3": ["c1"],
+                "num0": ["a2"],
+                "numminus1": ["c2"]
             }, "black": {
-                "trap": ["a5"],
-                "king": ["b5"],
-                "pawn": ["c5"],
-                "bishop": ["a4"],
-                "rook": ["c4"]
+                "num1": ["a5"],
+                "num2": ["b5"],
+                "num3": ["c5"],
+                "num0": ["a4"],
+                "numminus1": ["c4"]
             }
         };
 
@@ -92,7 +92,7 @@ var Chessboard = class Chessboard {
                     self.terminalT.innerHTML = "Your time has ended. Game Set.";
                     setTimeout(function() {
                     $.ajax({
-                        url: 'https://hidden-chess-proxy-19df82248288.herokuapp.com/http://52.79.61.17:8080/chess/' + self.gameId + '/movements',
+                        url: 'https://hidden-chess-proxy-19df82248288.herokuapp.com/http://52.79.61.17:8080/number/' + self.gameId + '/movements',
                         type: 'POST',
                         data: JSON.stringify({start: [99], 
                             end: [99], 
@@ -137,7 +137,7 @@ var Chessboard = class Chessboard {
             var registered = 0;
             while (registered == 0) {
                 $.ajax({
-                    url: 'https://hidden-chess-proxy-19df82248288.herokuapp.com/http://52.79.61.17:8080/users/chess',
+                    url: 'https://hidden-chess-proxy-19df82248288.herokuapp.com/http://52.79.61.17:8080/users/number',
                     type: 'POST',
                     data: JSON.stringify({name: self.name,}),
                     contentType: 'application/json',
@@ -155,7 +155,7 @@ var Chessboard = class Chessboard {
             var matched = 0;
             while (matched == 0) {
                 $.ajax({
-                    url: 'https://hidden-chess-proxy-19df82248288.herokuapp.com/http://52.79.61.17:8080/matchs/chess',
+                    url: 'https://hidden-chess-proxy-19df82248288.herokuapp.com/http://52.79.61.17:8080/matchs/number',
                     type: 'POST',
                     data: JSON.stringify({userId: self.userId,}),
                     contentType: 'application/json',
@@ -171,7 +171,7 @@ var Chessboard = class Chessboard {
                 });
             }
         }
-        self.terminalT.innerHTML = 'put king piece';
+        self.terminalT.innerHTML = 'put num1 piece';
         self.gamestate = 'prep';
         this.startTimer();
         
@@ -217,39 +217,39 @@ var Chessboard = class Chessboard {
         self.currentTurn = 'None';
         self.gamestate = 'paused';
         document.getElementById("timerWindow").innerHTML = "00:00:00";
-        this.terminalT.innerHTML = 'Welcome to HIDDENCHESS!<br>Please start a new game.'
+        this.terminalT.innerHTML = 'Welcome to NUMBERCHESS!<br>Please start a new game.'
 
     }
 
     addPieces(positions) { //Add pieces to board, positions of pieces as argument
 
-        var wpawn = "img/pawn.png";
-        var bpawn = "img/hidden.png";
-        var wrook = "img/rook.png";
-        var brook = "img/hidden.png";
-        var wbishop = "img/bishop.png";
-        var bbishop = "img/hidden.png";
-        var wtrap = "img/mine.png";
-        var btrap = "img/hidden.png";
-        var wking = "img/king.png";
-        var bking = "img/hidden.png";
+        var wnum1 = "img/num1.png";
+        var bnum1 = "img/hidden.png";
+        var wnum2 = "img/num2.png";
+        var bnum2 = "img/hidden.png";
+        var wnum3 = "img/num3.png";
+        var bnum3 = "img/hidden.png";
+        var wnum0 = "img/num0.png";
+        var bnum0 = "img/hidden.png";
+        var wnumminus1 = "img/numminus1.png";
+        var bnumminus1 = "img/hidden.png";
 
-        var white_pawns = positions.white.pawn;
-        var black_pawns = positions.black.pawn;
-        var white_rooks = positions.white.rook;
-        var black_rooks = positions.black.rook;
-        var white_bishops = positions.white.bishop;
-        var black_bishops = positions.black.bishop;
-        var white_trap = positions.white.trap;
-        var black_trap = positions.black.trap;
-        var white_king = positions.white.king;
-        var black_king = positions.black.king;
+        var white_num1 = positions.white.num1;
+        var black_num1 = positions.black.num1;
+        var white_num2 = positions.white.num2;
+        var black_num2 = positions.black.num2;
+        var white_num3 = positions.white.num3;
+        var black_num3 = positions.black.num3;
+        var white_num0 = positions.white.num0;
+        var black_num0 = positions.black.num0;
+        var white_numminus1 = positions.white.numminus1;
+        var black_numminus1 = positions.black.numminus1;
 
-        var pawn_prior = 4;
-        var rook_prior = 3;
-        var bishop_prior = 2;
-        var trap_prior = 1;
-        var king_prior = 5;
+        var num1_prior = 1;
+        var num2_prior = 2;
+        var num3_prior = 3;
+        var num0_prior = 0;
+        var numminus1_prior = -1;
 
         for (var x = 0; x < this.row; x++) {
             for (var i = 0; i < this.col; i++) {
@@ -257,65 +257,65 @@ var Chessboard = class Chessboard {
                 var id = this.letters[i] + (x + 1);
                 var elem = document.createElement("img");
 
-                if (white_pawns.indexOf(id) > -1) {
-                    elem.setAttribute("src", wpawn);
+                if (white_num1.indexOf(id) > -1) {
+                    elem.setAttribute("src", wnum1);
                     elem.setAttribute("side", "white");
-                    elem.setAttribute("type", "pawn");
-                    elem.setAttribute("prior", pawn_prior);
+                    elem.setAttribute("type", "num1");
+                    elem.setAttribute("prior", num1_prior);
                 }
-                else if (black_pawns.indexOf(id) > -1) {
-                    elem.setAttribute("src", bpawn);
+                else if (black_num1.indexOf(id) > -1) {
+                    elem.setAttribute("src", bnum1);
                     elem.setAttribute("side", "black");
-                    elem.setAttribute("type", "pawn");
-                    elem.setAttribute("prior", pawn_prior);
+                    elem.setAttribute("type", "num1");
+                    elem.setAttribute("prior", num1_prior);
                 }
-                else if (white_rooks.indexOf(id) > -1) {
-                    elem.setAttribute("src", wrook);
+                else if (white_num2.indexOf(id) > -1) {
+                    elem.setAttribute("src", wnum2);
                     elem.setAttribute("side", "white");
-                    elem.setAttribute("type", "rook");
-                    elem.setAttribute("prior", rook_prior);
+                    elem.setAttribute("type", "num2");
+                    elem.setAttribute("prior", num2_prior);
                 }
-                else if (black_rooks.indexOf(id) > -1) {
-                    elem.setAttribute("src", brook);
+                else if (black_num2.indexOf(id) > -1) {
+                    elem.setAttribute("src", bnum2);
                     elem.setAttribute("side", "black");
-                    elem.setAttribute("type", "rook");
-                    elem.setAttribute("prior", rook_prior);
+                    elem.setAttribute("type", "num2");
+                    elem.setAttribute("prior", num2_prior);
                 }
-                else if (black_bishops.indexOf(id) > -1) {
-                    elem.setAttribute("src", bbishop);
-                    elem.setAttribute("side", "black");
-                    elem.setAttribute("type", "bishop");
-                    elem.setAttribute("prior", bishop_prior);
-                }
-                else if (white_bishops.indexOf(id) > -1) {
-                    elem.setAttribute("src", wbishop);
+                else if (white_num3.indexOf(id) > -1) {
+                    elem.setAttribute("src", wnum3);
                     elem.setAttribute("side", "white");
-                    elem.setAttribute("type", "bishop");
-                    elem.setAttribute("prior", bishop_prior);
+                    elem.setAttribute("type", "num3");
+                    elem.setAttribute("prior", num3_prior);
                 }
-                else if (white_trap.indexOf(id) > -1) {
-                    elem.setAttribute("src", wtrap);
-                    elem.setAttribute("side", "white");
-                    elem.setAttribute("type", "trap");
-                    elem.setAttribute("prior", trap_prior);
-                }
-                else if (black_trap.indexOf(id) > -1) {
-                    elem.setAttribute("src", btrap);
+                else if (black_num3.indexOf(id) > -1) {
+                    elem.setAttribute("src", bnum3);
                     elem.setAttribute("side", "black");
-                    elem.setAttribute("type", "trap");
-                    elem.setAttribute("prior", trap_prior);
+                    elem.setAttribute("type", "num3");
+                    elem.setAttribute("prior", num3_prior);
                 }
-                else if (white_king.indexOf(id) > -1) {
-                    elem.setAttribute("src", wking);
+                else if (white_num0.indexOf(id) > -1) {
+                    elem.setAttribute("src", wnum0);
                     elem.setAttribute("side", "white");
-                    elem.setAttribute("type", "king");
-                    elem.setAttribute("prior", king_prior);
+                    elem.setAttribute("type", "num0");
+                    elem.setAttribute("prior", num0_prior);
                 }
-                else if (black_king.indexOf(id) > -1) {
-                    elem.setAttribute("src", bking);
+                else if (black_num0.indexOf(id) > -1) {
+                    elem.setAttribute("src", bnum0);
                     elem.setAttribute("side", "black");
-                    elem.setAttribute("type", "king");
-                    elem.setAttribute("prior", king_prior);
+                    elem.setAttribute("type", "num0");
+                    elem.setAttribute("prior", num0_prior);
+                }
+                else if (white_numminus1.indexOf(id) > -1) {
+                    elem.setAttribute("src", wnumminus1);
+                    elem.setAttribute("side", "white");
+                    elem.setAttribute("type", "numminus1");
+                    elem.setAttribute("prior", numminus1_prior);
+                }
+                else if (black_numminus1.indexOf(id) > -1) {
+                    elem.setAttribute("src", bnumminus1);
+                    elem.setAttribute("side", "black");
+                    elem.setAttribute("type", "numminus1");
+                    elem.setAttribute("prior", numminus1_prior);
                 }
                 else {
                     continue;
@@ -343,101 +343,101 @@ var Chessboard = class Chessboard {
                     case 0:
                     var pos = {
                         "white": {
-                            "trap": [""],
-                            "king": [e.target.getAttribute('id')],
-                            "pawn": [""],
-                            "bishop": [""],
-                            "rook": [""]
+                            "num1": [e.target.getAttribute('id')],
+                            "num2": [""],
+                            "num3": [""],
+                            "num0": [""],
+                            "numminus1": [""]
                         }, "black": {
-                            "trap": [""],
-                            "king": [""],
-                            "pawn": [""],
-                            "bishop": [""],
-                            "rook": [""]
+                            "num1": [""],
+                            "num2": [""],
+                            "num3": [""],
+                            "num0": [""],
+                            "numminus1": [""]
                         }
                     };
                     self.addPieces(pos);
                     self.prepPiece = 1;
-                    self.terminalT.innerHTML = 'put rook piece';
+                    self.terminalT.innerHTML = 'put num2 piece';
                     break;
                     
                     case 1:
                     var pos = {
                         "white": {
-                            "trap": [""],
-                            "king": [""],
-                            "pawn": [""],
-                            "bishop": [""],
-                            "rook": [e.target.getAttribute('id')]
+                            "num1": [""],
+                            "num2": [e.target.getAttribute('id')],
+                            "num3": [""],
+                            "num0": [""],
+                            "numminus1": [""]
                         }, "black": {
-                            "trap": [""],
-                            "king": [""],
-                            "pawn": [""],
-                            "bishop": [""],
-                            "rook": [""]
+                            "num1": [""],
+                            "num2": [""],
+                            "num3": [""],
+                            "num0": [""],
+                            "numminus1": [""]
                         }
                     };
                     self.addPieces(pos);
                     self.prepPiece = 2;
-                    self.terminalT.innerHTML = 'put bishop piece';
+                    self.terminalT.innerHTML = 'put num3 piece';
                     break;
                     
                     case 2:
                     var pos = {
                         "white": {
-                            "trap": [""],
-                            "king": [""],
-                            "pawn": [""],
-                            "bishop": [e.target.getAttribute('id')],
-                            "rook": [""]
+                            "num1": [""],
+                            "num2": [""],
+                            "num3": [e.target.getAttribute('id')],
+                            "num0": [""],
+                            "numminus1": [""]
                         }, "black": {
-                            "trap": [""],
-                            "king": [""],
-                            "pawn": [""],
-                            "bishop": [""],
-                            "rook": [""]
+                            "num1": [""],
+                            "num2": [""],
+                            "num3": [""],
+                            "num0": [""],
+                            "numminus1": [""]
                         }
                     };
                     self.addPieces(pos);
                     self.prepPiece = 3;
-                    self.terminalT.innerHTML = 'put pawn piece';
+                    self.terminalT.innerHTML = 'put num0 piece';
                     break;
                     
                     case 3:
                     var pos = {
                         "white": {
-                            "trap": [""],
-                            "king": [""],
-                            "pawn": [e.target.getAttribute('id')],
-                            "bishop": [""],
-                            "rook": [""]
+                            "num1": [""],
+                            "num2": [""],
+                            "num3": [""],
+                            "num0": [e.target.getAttribute('id')],
+                            "numminus1": [""]
                         }, "black": {
-                            "trap": [""],
-                            "king": [""],
-                            "pawn": [""],
-                            "bishop": [""],
-                            "rook": [""]
+                            "num1": [""],
+                            "num2": [""],
+                            "num3": [""],
+                            "num0": [""],
+                            "numminus1": [""]
                         }
                     };
                     self.addPieces(pos);
                     self.prepPiece = 4;
-                    self.terminalT.innerHTML = 'put mine piece';
+                    self.terminalT.innerHTML = 'put numminus1 piece';
                     break;
                     
                     case 4:
                     var pos = {
                         "white": {
-                            "trap": [e.target.getAttribute('id')],
-                            "king": [""],
-                            "pawn": [""],
-                            "bishop": [""],
-                            "rook": [""]
+                            "num1": [""],
+                            "num2": [""],
+                            "num3": [""],
+                            "num0": [""],
+                            "numminus1": [e.target.getAttribute('id')]
                         }, "black": {
-                            "trap": [""],
-                            "king": [""],
-                            "pawn": [""],
-                            "bishop": [""],
-                            "rook": [""]
+                            "num1": [""],
+                            "num2": [""],
+                            "num3": [""],
+                            "num0": [""],
+                            "numminus1": [""]
                         }
                     };
                     self.addPieces(pos);
@@ -449,17 +449,17 @@ var Chessboard = class Chessboard {
                         rArr.sort(() => Math.random() - 0.5);
                         var pos = {
                             "white": {
-                                "trap": [""],
-                                "king": [""],
-                                "pawn": [""],
-                                "bishop": [""],
-                                "rook": [""]
+                                "num1": [""],
+                                "num2": [""],
+                                "num3": [""],
+                                "num0": [""],
+                                "numminus1": [""]
                             }, "black": {
-                                "trap": [opTerritory[rArr[4]]],
-                                "king": [opTerritory[rArr[0]]],
-                                "pawn": [opTerritory[rArr[3]]],
-                                "bishop": [opTerritory[rArr[2]]],
-                                "rook": [opTerritory[rArr[1]]]
+                                "num1": [opTerritory[rArr[4]]],
+                                "num2": [opTerritory[rArr[0]]],
+                                "num3": [opTerritory[rArr[3]]],
+                                "num0": [opTerritory[rArr[2]]],
+                                "numminus1": [opTerritory[rArr[1]]]
                             }
                         };
                         self.addPieces(pos);
@@ -468,7 +468,7 @@ var Chessboard = class Chessboard {
                         console.log({piece: pos, userId: self.userId});
                         setTimeout(function() {
                         $.ajax({
-                            url: 'https://hidden-chess-proxy-19df82248288.herokuapp.com/http://52.79.61.17:8080/chess/' + self.gameId + '/pieces',
+                            url: 'https://hidden-chess-proxy-19df82248288.herokuapp.com/http://52.79.61.17:8080/number/' + self.gameId + '/pieces',
                             type: 'POST',
                             data: JSON.stringify({piece: pos, userId: self.userId}),
                             contentType: 'application/json',
@@ -484,7 +484,7 @@ var Chessboard = class Chessboard {
                         var eComp = 0;
                         while (eComp == 0) {
                             $.ajax({
-                                url: 'https://hidden-chess-proxy-19df82248288.herokuapp.com/http://52.79.61.17:8080/chess/' + self.gameId + '/pieces?userId=' + self.userId,
+                                url: 'https://hidden-chess-proxy-19df82248288.herokuapp.com/http://52.79.61.17:8080/number/' + self.gameId + '/pieces?userId=' + self.userId,
                                 type: 'GET',
                                 async: false,
                                 complete: function (data) {
@@ -493,17 +493,17 @@ var Chessboard = class Chessboard {
                                         console.log(data.responseJSON);
                                         var pos = {
                                             "white": {
-                                                "trap": [""],
-                                                "king": [""],
-                                                "pawn": [""],
-                                                "bishop": [""],
-                                                "rook": [""]
+                                                "num1": [""],
+                                                "num2": [""],
+                                                "num3": [""],
+                                                "num0": [""],
+                                                "numminus1": [""]
                                             }, "black": {
-                                                "trap": [self.letters[(14 - data.responseJSON.piece.trap[0]) % 3] + (parseInt((14 - data.responseJSON.piece.trap[0]) / 3) + 1).toString()],
-                                                "king": [self.letters[(14 - data.responseJSON.piece.king[0]) % 3] + (parseInt((14 - data.responseJSON.piece.king[0]) / 3) + 1).toString()],
-                                                "pawn": [self.letters[(14 - data.responseJSON.piece.pawn[0]) % 3] + (parseInt((14 - data.responseJSON.piece.pawn[0]) / 3) + 1).toString()],
-                                                "bishop": [self.letters[(14 - data.responseJSON.piece.bishop[0]) % 3] + (parseInt((14 - data.responseJSON.piece.bishop[0]) / 3) + 1).toString()],
-                                                "rook": [self.letters[(14 - data.responseJSON.piece.rook[0]) % 3] + (parseInt((14 - data.responseJSON.piece.rook[0]) / 3) + 1).toString()]
+                                                "num1": [self.letters[(14 - data.responseJSON.nums.num1[0]) % 3] + (parseInt((14 - data.responseJSON.nums.num1[0]) / 3) + 1).toString()],
+                                                "num2": [self.letters[(14 - data.responseJSON.nums.num2[0]) % 3] + (parseInt((14 - data.responseJSON.nums.num2[0]) / 3) + 1).toString()],
+                                                "num3": [self.letters[(14 - data.responseJSON.nums.num3[0]) % 3] + (parseInt((14 - data.responseJSON.nums.num3[0]) / 3) + 1).toString()],
+                                                "num0": [self.letters[(14 - data.responseJSON.nums.num0[0]) % 3] + (parseInt((14 - data.responseJSON.nums.num0[0]) / 3) + 1).toString()],
+                                                "numminus1": [self.letters[(14 - data.responseJSON.nums.numminus1[0]) % 3] + (parseInt((14 - data.responseJSON.nums.numminus1[0]) / 3) + 1).toString()]
                                             }
                                         };
                                         self.addPieces(pos);
@@ -554,7 +554,7 @@ var Chessboard = class Chessboard {
             console.log(endId);
             if (self.playingVS == 'vsplayer') setTimeout(function() {
             $.ajax({
-                url: 'https://hidden-chess-proxy-19df82248288.herokuapp.com/http://52.79.61.17:8080/chess/' + self.gameId + '/movements',
+                url: 'https://hidden-chess-proxy-19df82248288.herokuapp.com/http://52.79.61.17:8080/number/' + self.gameId + '/movements',
                 type: 'POST',
                 data: JSON.stringify({start: [self.letters.indexOf(startId[0]) + Number(startId[1]) * 3 - 3], 
                     end: [self.letters.indexOf(endId[0]) + Number(endId[1]) * 3 - 3], 
@@ -572,11 +572,21 @@ var Chessboard = class Chessboard {
             }, 10);
             if (e.target.classList.contains('piece') ) {
                 if (self.clicked_piece.getAttribute("side") != e.target.getAttribute("side")) {
-                    if (e.target.getAttribute("type") != "trap") {
+                    if (e.target.getAttribute("prior") < self.clicked_piece.getAttribute("prior")) {
+                        if (e.target.getAttribute("prior") < 0) {
+                            self.clicked_piece.setAttribute("prior", -self.clicked_piece.getAttribute("prior"));
+                            var sImg;
+                            var pr = self.clicked_piece.getAttribute("prior");
+                            if (pr > 0) sImg = "img/num" + pr.toString() + ".png";
+                            else if (pr < 0) sImg = "img/numminus" + (-pr).toString() + ".png";
+                            else sImg = "img/num0.png";
+                            if (self.clicked_piece.getAttribute("side") == "black") sImg = "img/hidden.png";
+                            self.clicked_piece.setAttribute("src", sImg);
+                        }
                         e.target.parentElement.appendChild(self.clicked_piece);
                         e.target.remove();
                     }
-                    else {
+                    else if (e.target.getAttribute("prior") > self.clicked_piece.getAttribute("prior")) {
                         self.clicked_piece.remove();
                     }
 
@@ -588,10 +598,10 @@ var Chessboard = class Chessboard {
 
                     for (var i = 0; i < pieces.length; i++) {
 
-                        if (pieces[i].getAttribute("side") == "black" && pieces[i].getAttribute("type") == "king") {
+                        if (pieces[i].getAttribute("side") == "black" && pieces[i].getAttribute("prior") != 0) {
                             isEnemyAlive++;
                         }
-                        if (pieces[i].getAttribute("side") == "white" && pieces[i].getAttribute("type") == "king") {
+                        if (pieces[i].getAttribute("side") == "white" && pieces[i].getAttribute("prior") != 0) {
                             isMeAlive++;
                         }
                     }
@@ -721,7 +731,7 @@ var Chessboard = class Chessboard {
             }
             if (cposition != null && cposition.hasChildNodes()) {
 
-                if ((cposition.children[0].getAttribute("side") != ce.children[0].getAttribute("side") && ce.children[0].getAttribute("type") != "trap") || checkMovement) {
+                if ((cposition.children[0].getAttribute("side") != ce.children[0].getAttribute("side") && ce.children[0].getAttribute("prior") > 0) || checkMovement) {
                     cposition.classList.add('legal');
 
 
@@ -849,35 +859,18 @@ var Chessboard = class Chessboard {
                 i++;
 
             } while (loop_enabler);
-
         }
-        if (piece_type == "rook") {
-            loop_enabler = false;
-            rook_func();
-        }
-        if (piece_type == "bishop") {
-            loop_enabler = false;
-            bishop_func();
-        }
-        if (piece_type == "trap" || piece_type == "king" || piece_type == "pawn") {
-            loop_enabler = false;
-            rook_func();
-            i = 1;
-            bishop_func();
-        }
+        loop_enabler = false;
+        rook_func();
+        i = 1;
+        bishop_func();
 
 
 
     }
     convertToJSON() { //Generates JSON file from current positions of the board
 
-        var positions = {
-            bishop: 0,
-            king: 0,
-            pawn: 0,
-            rook: 0,
-            trap: 0
-        }
+        var positions = {};
         var squares = document.getElementsByClassName("square");
 
         for (var i = 0; i < squares.length; i++) {
@@ -908,7 +901,7 @@ var Chessboard = class Chessboard {
                 console.log('eCompp');
                 console.log(eCompp);
                 $.ajax({
-                    url: 'https://hidden-chess-proxy-19df82248288.herokuapp.com/http://52.79.61.17:8080/chess/' + self.gameId + '/movements?userId=' + self.userId,
+                    url: 'https://hidden-chess-proxy-19df82248288.herokuapp.com/http://52.79.61.17:8080/number/' + self.gameId + '/movements?userId=' + self.userId,
                     type: 'GET',
                     async: false,
                     complete: function (data) {
@@ -944,7 +937,7 @@ var Chessboard = class Chessboard {
 
         for (var i = 0; i < squares.length; i++) {
             if (squares[i].children[0] !== null && squares[i].children[0] !== undefined) {
-                if (squares[i].children[0].getAttribute("side") == 'white' && squares[i].children[0].getAttribute("type") != 'trap') self.isLegalMove(squares[i], true);
+                if (squares[i].children[0].getAttribute("side") == 'white' && squares[i].children[0].getAttribute("prior") > 0) self.isLegalMove(squares[i], true);
             }
         }
 
@@ -1001,10 +994,10 @@ var Chessboard = class Chessboard {
                                     ranSelected = 1;
                                 }
 
-                                if (squares[ind2[j]].children[0].getAttribute("prior") - squares[ind[i]].children[0].getAttribute("prior") > lastPrior) {
+                                if (lastPrior == 0 && squares[ind2[j]].children[0].getAttribute("prior") <= squares[ind[i]].children[0].getAttribute("prior")) {
                                     lastS = squares[ind[i]].getAttribute("id");
                                     lastE = squares[ind2[j]].getAttribute("id");
-                                    lastPrior = squares[ind2[j]].children[0].getAttribute("prior") - squares[ind[i]].children[0].getAttribute("prior");
+                                    lastPrior = 1;
                                 }
 
                             }

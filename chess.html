@@ -1,103 +1,177 @@
 <!DOCTYPE html>
-
 <html>
-    
-    <head>
-        
-        <meta charset="UTF-8">
-        <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>HIDDENCHESS</title>
-        <link rel="stylesheet" type="text/css" href="css/style.css">
-        <link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css">
-        <link rel="icon" href="img/fav.png">
-        
-    </head>
-    
-    <body>
-        
-        <div class="background-image"></div>
-        
-        <div id="mySidenav" class="sidenav unselectable">
-            
-            <a class="closebtn" onclick="closeNav()">&lt;</a>
-            
-            <a onclick="ngameOpt('#single')">Singleplayer</a>
-            <div id="single" class="single newgame">
-                <form>
-                    White <input type="radio" name="nside" value="white" checked><br>
-                    Black <input type="radio" name="nside" value="black"><br><br>
-                    <input type="button" class="okbutton" onclick="chesstable.newGame('vsai')" value="Start!">
-                </form>
-            </div>
-            
-            <a onclick="ngameOpt('#multi')">Multiplayer</a>
-            <div id="multi" class="multi newgame">
-                <form>
-                    <input type="button" class="okbutton" onclick="chesstable.newGame('vsplayer')" value="Start!">
-                </form>
-            </div>
-            
-            <a onclick="ngameOpt('#settings')">Settings</a>
-            <div id="settings" class="settings newgame" name="difficulty">
-                <div class="row_wrapper">
-                    <span style="float: left !important;">Difficulty: </span>
-                    <select id ="StyledSelect" style="display: inline-block !important;">
-                        <option value = 0>Random</option>
-                        <option value = 2>Easy</option>
-                        <option value = 4 selected>Normal</option>
-                        <option value = 6>Hard</option>
-                        <option value = 8>Extreme</option>
-                        <option value = 10>Optimal</option>
-                    </select><br>
-                </div>
-                <div class = "row_wrapper">
-                    <span  style="float: left !important;">Timer: </span>
-                    <span id="TimerLength" ></span>
-                    <div id="TimerSlider" class="SliderPopUp">
-                        <input type="range" min="1" max="120" value="1" class="slider" id="Timer">
-                    </div>
-                </div>
-                <div class = "row_wrapper">
-                    <span style="float: left !important;">Inc. per turn: </span>
-                    <span id="IncreaseAmount"></span>
-                    <div id="IncreaseSlider" class="SliderPopUp">
-                        <input type="range" min="0" max="60" value="20" class="slider" id="TimerIncrease">
-                    </div>
-                </div><br>
-                <input type="button" class="okbutton" onclick="save()" value="Save!">
-                <div class="popup" onclick="togglePopUp()" >
-                    <span class="popuptext" id="myPopup">Settings successfully saved! They will take effect on new game.</span>
-                </div>
-            </div>
-            
-            <a onclick="ngameOpt('#debug')">Debug</a>
-            <div id="debug" class="debug newgame">
-                <form>
-                    <input type="button" class="okbutton" onclick="chesstable.clearData()" value="Clear all data">
-                </form>
-            </div>
-        
-        </div>
-        
-        
-        
-        <h2>HIDDENCHESS</h2>
-        <div class="wrapper">
-            <div id = "timerWindow" class="unselectable"></div>
-            <div onclick = "pauseGame()" id = "pauseButton" class= "unselectable">PAUSE</div>
-        </div>
 
-        <div id="mainChessBoard"></div>
-        
-        <div id ="bigterminal" ><span id="TerminalText" ></span></div>
+<head>
+	<title>HIDDENCHESS</title>
+	<meta charset="UTF-8" />
 
+	<link rel="icon" href="./assets/images/favicon.ico">
+	<link rel="stylesheet" type="text/css" href="style.css?after">
+	<link type="text/css" rel="stylesheet" href="assets/css/materialize.min.css" media="screen,projection" />
 
-        <script type="text/javascript" src="js/jquery.min.js"></script>
-        <script type="text/javascript" src="js/jquery-ui.min.js"></script>
-        <script type="text/javascript" src="js/chessboard.js"></script>
-        <script type="text/javascript" src="js/main.js"></script>
-        
-    </body>
-    
+	<script type="text/javascript" src="assets/js/materialize.min.js"></script>
+	<script src="assets/js/button.js?ver=1"></script>
+	<script src="assets/js/mouseover.js?ver=2"></script>
+	<script src="assets/js/modal.js?ver=2"></script>
+</head>
+<body>
+	<div id='modal00' class="modal">
+		<div class="modal-content">
+			<p>Hidden Chess에 오신 것을 환영합니다. Hidden Chess는 턴 기반의 추상 전략 게임으로, 상대에 기물의 정보가 주어지지 않는 상태에서 상대 기물에 대한 예측을 바탕으로 승리를 얻어내는 게임입니다.</p>
+			
+			<p>게임에 대한 정보를 더 얻고 싶다면 다음을 눌러주세요.</p>
+			
+			
+		</div>
+		<div class="modal-footer">
+			<a href="#!" class="modal-close waves-effect waves-green btn-flat">닫기</a>
+			<a href="#!" class="next waves-effect waves-green btn-flat">다음</a>
+		</div>
+	</div>
+	<div id="modal01" class="modal">
+		<div class="modal-content">
+			<img src="assets/images/piece/piece place.gif" alt="Image" width="300" height="200" />
+  			<p>게임이 시작되면 먼저 각 플레이어는 자신의 기물을 배치합니다.<br>
+				게임판은 가로 3칸, 세로 5칸의 크기를 가지며, 이 중 하단 2줄이 플레이어의 영역이고, 상단 2줄이 상대방의 영역입니다.<br>
+				각 플레이어는 자신의 영역에만 기물을 배치할 수 있습니다.
+			</p>
+		</div>
+		<div class="modal-footer">
+			<a href="#!" class="prev waves-effect waves-green btn-flat">이전</a>
+			<a href="#!" class="next waves-effect waves-green btn-flat">다음</a>
+		</div>
+	</div>
+	<div id="modal02" class="modal">
+		<div class="modal-content">
+			<img src="assets/images/piece/king moving.gif" alt="Image" width="300" height="300" />
+  			<p>각 기물은 자신의 차례에 해당 기물을 클릭하여 움직일 수 있습니다.<br>
+				기물을 클릭하면 해당 기물이 움직일 수 있는 칸이 표시되며, 원하는 칸을 클릭하면 기물은 해당 칸으로 움직이게 되고 자신의 차례가 끝납니다.<br>
+				또한 움직일 기물을 잘못 선택하였을 경우, 다른 기물을 선택하거나 해당 기물을 다시 클릭하는 것으로 이동을 취소할 수 있습니다.<br>
+				만약 기물이 이동하려는 칸에 상대방의 기물이 존재하고, 해당 기물이 공격할 수 있는 기물이라면 상대 기물을 공격하게 됩니다.
+			</p>
+		</div>
+		<div class="modal-footer">
+			<a href="#!" class="prev waves-effect waves-green btn-flat">이전</a>
+			<a href="#!" class="next waves-effect waves-green btn-flat">다음</a>
+		</div>
+	</div>
+	<!-- 모달 1 -->
+	<div id="modal10" class="modal">
+		<div class="modal-content">
+			<img src="assets/images/piece/kingmov.png" alt="Image" width="300" height="300" />
+  			<p>킹은 가장 중요한 기물이며, 모든 방향으로 1칸씩 움직일 수 있습니다.<br>
+				킹이 파괴된다면 즉시 게임에서 패배하게 되며, 따라서 가장 우선으로 지켜야 할 기물입니다.<br>
+				하지만 동시에 킹은 가장 강력한 공격자이기도 합니다. 킹은 룩과 비숍의 이동규칙을 모두 가지며, 따라서 모든 방향으로 움직이며 공격할 수 있는 기물입니다.
+			</p>
+		</div>
+		<div class="modal-footer">
+			<a href="#!" class="prev waves-effect waves-green btn-flat">이전</a>
+			<a href="#!" class="next waves-effect waves-green btn-flat">다음</a>
+		</div>
+	</div>
+
+	<!-- 모달 2 -->
+	<div id="modal20" class="modal">
+		<div class="modal-content">
+			<img src="assets/images/piece/rookmov.png" alt="Image" width="300" height="300" />
+  			<p>룩은 공격용 기물이며, 상하좌우 1칸씩 움직일 수 있습니다.<br>
+				상대의 기물을 공격할 수 있으며, 이 때 공격당한 상대의 기물은 파괴됩니다.</p>
+		</div>
+		<div class="modal-footer">
+			<a href="#!" class="prev waves-effect waves-green btn-flat">이전</a>
+			<a href="#!" class="next waves-effect waves-green btn-flat">다음</a>
+		</div>
+	</div>
+
+	<!-- 모달 3 -->
+	<div id="modal30" class="modal">
+		<div class="modal-content">
+			<img src="assets/images/piece/bishopmov.png" alt="Image" width="300" height="300" />
+  			<p>비숍은 변칙적인 공격용 기물이며, 대각선 방향으로 1칸씩 움직일 수 있습니다.<br>
+				상대의 기물을 공격할 수 있으며, 이 때 공격당한 상대의 기물은 파괴됩니다.<br>
+				다만, 룩과 다르게 비숍은 처음 배치된 칸의 색에서 벗어나지 못하니 배치에 주의하세요.</p>
+		</div>
+		<div class="modal-footer">
+			<a href="#!" class="prev waves-effect waves-green btn-flat">이전</a>
+			<a href="#!" class="next waves-effect waves-green btn-flat">다음</a>
+		</div>
+	</div>
+
+	<!-- 모달 4 -->
+	<div id="modal40" class="modal">
+		<div class="modal-content">
+			<img src="assets/images/piece/pawnmov.png" alt="Image" width="300" height="300" />
+  			<p>폰은 수비용 기물이며, 모든 방향으로 1칸씩 움직일 수 있습니다.<br>
+				상대의 기물을 공격할 수 없으며, 공격당하면 파괴됩니다.</p>
+		</div>
+		<div class="modal-footer">
+			<a href="#!" class="prev waves-effect waves-green btn-flat">이전</a>
+			<a href="#!" class="next waves-effect waves-green btn-flat">다음</a>
+		</div>
+	</div>
+
+	<!-- 모달 5 -->
+	<div id="modal50" class="modal">
+		<div class="modal-content">
+			<img src="assets/images/piece/minemov.png" alt="Image" width="300" height="300" />
+  			<p>지뢰는 변칙적인 수비용 기물이며, 모든 방향으로 1칸씩 움직일 수 있습니다.<br>
+				상대의 기물을 공격할 수 없지만, 만약 공격당한다면 상대의 기물이 파괴됩니다.</p>
+		</div>
+		<div class="modal-footer">
+			<a href="#!" class="prev waves-effect waves-green btn-flat">이전</a>
+			<a href="#!" class="next waves-effect waves-green btn-flat">다음</a>
+		</div>
+	</div>
+	<div id="modal60" class="modal">
+		<div class="modal-content">
+			<img src="assets/images/nc.png" alt="Image" width="200" height="300" />
+  			<p>Number Chess는 Hidden Chess와 비슷하게 상대 기물의 정보가 가려진 채로 시작하는 게임입니다.<br>
+				플레이어는 -1부터 3까지 정수가 써있는 5개의 기물을 조종하며, 각 기물은 모든 방향으로 이동할 수 있습니다.<br>
+				1 이상인 기물만이 공격 가능하며, 공격시 숫자가 더 낮은 기물이 파괴됩니다.<br>
+				다만 공격받은 기물이 음수였다면, 살아남은 기물의 숫자가 반전됩니다.<br>
+				이외의 모든 규칙은 히든 체스와 동일합니다.
+			</p>
+		</div>
+		<div class="modal-footer">
+			<a href="#!" class="prev waves-effect waves-green btn-flat">이전</a>
+			<a href="#!" class="next waves-effect waves-green btn-flat">다음</a>
+		</div>
+	</div>
+	<div id="modal60" class="modal">
+		<div class="modal-content">
+  			<p>이상으로 설명이 모두 끝났습니다. 게임을 즐겨주세요.</p>
+		</div>
+		<div class="modal-footer">
+			<a href="#!" class="prev waves-effect waves-green btn-flat">이전</a>
+			<a href="#!" class="modal-close waves-effect waves-green btn-flat">닫기</a>
+		</div>
+	</div>
+
+	<div id="popup1" class="popup">
+		<div class="popup-content">
+			<p>이름을 입력해주세요</p>
+			<input type="text" id="nicknameInput" />
+			<div class="popupbuttoncontainer">
+				<button id="submitButton">입력</button>
+				<button id="popupcloseButton">닫기</button>
+			</div>
+
+		</div>
+	</div>
+
+	<div class="container">
+		<div class='logo'><img src="./assets/images/logo.png"></div>
+		<div class='size'><img src="./assets/images/size.png"></div>
+		<div class="button-container">
+			<div id="buttonDescription" class="button-description"></div>
+			<button id='singlebtn'><img src="./assets/images/robot.png" alt="Image" width="100" height="100"></button>
+			
+			<button id='manualbtn'><img src="./assets/images/manual.png" alt="Image" width="100" height="100"></button>
+			<button id='modchangebtn'><img src="./assets/images/exchange_mode.png" alt="Image" width="100" height="100"></button>
+			<button id='boardchangebtn'><img src="./assets/images/exchange_board.png" alt="Image" width="100" height="100"></button>
+			</script>
+		</div>
+	</div>
+</body>
+
 </html>
