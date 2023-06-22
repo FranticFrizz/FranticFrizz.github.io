@@ -22,14 +22,19 @@
             
             <a class="closebtn" onclick="closeNav()">&lt;</a>
             
-            <a onclick="ngameOpt('#ngopt')">New Game</a>
-            <div id="ngopt" class="newgame">
+            <a onclick="ngameOpt('#single')">Singleplayer</a>
+            <div id="single" class="single newgame">
                 <form>
-                    VS. A.I <input type="radio" name="ngame" value="vsai" checked><br>
-                    VS. Player <input type="radio" name="ngame" value="vsplayer"><br><br>
                     White <input type="radio" name="nside" value="white" checked><br>
                     Black <input type="radio" name="nside" value="black"><br><br>
-                    <input type="button" class="okbutton" onclick="chesstable.newGame()" value="Start!">
+                    <input type="button" class="okbutton" onclick="chesstable.newGame('vsai')" value="Start!">
+                </form>
+            </div>
+            
+            <a onclick="ngameOpt('#multi')">Multiplayer</a>
+            <div id="multi" class="multi newgame">
+                <form>
+                    <input type="button" class="okbutton" onclick="chesstable.newGame('vsplayer')" value="Start!">
                 </form>
             </div>
             
@@ -64,6 +69,13 @@
                 <div class="popup" onclick="togglePopUp()" >
                     <span class="popuptext" id="myPopup">Settings successfully saved! They will take effect on new game.</span>
                 </div>
+            </div>
+            
+            <a onclick="ngameOpt('#debug')">Debug</a>
+            <div id="debug" class="debug newgame">
+                <form>
+                    <input type="button" class="okbutton" onclick="chesstable.clearData()" value="Clear all data">
+                </form>
             </div>
         
         </div>

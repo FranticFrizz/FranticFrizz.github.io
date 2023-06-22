@@ -10,13 +10,13 @@ var Chessboard = class Chessboard {
 
         this.initialPos = {
             "white": {
-                "queen": ["a1"],
+                "trap": ["a1"],
                 "king": ["b1"],
                 "pawn": ["c1"],
                 "bishop": ["a2"],
                 "rook": ["c2"]
             }, "black": {
-                "queen": ["a5"],
+                "trap": ["a5"],
                 "king": ["b5"],
                 "pawn": ["c5"],
                 "bishop": ["a4"],
@@ -25,6 +25,10 @@ var Chessboard = class Chessboard {
         };
 
         var self = this;
+        self.name = '';
+        self.userId = '';
+        self.gameId = '';
+        self.movedLast = '';
         self.clicked_piece;
         self.terminalT = document.getElementById("TerminalText");
         self.prepPiece = 0;
@@ -78,12 +82,33 @@ var Chessboard = class Chessboard {
                 hours = "0" + hours;
             }
 
-            document.getElementById("timerWindow").innerHTML = hours + ":" + minutes + ":" + seconds;
+            if (self.currentTurn == 'white') document.getElementById("timerWindow").innerHTML = hours + ":" + minutes + ":" + seconds;
 
             if (self[timer] <= 0) {
-                clearInterval(self.ongoing);
-                self.terminalT.innerHTML = "Your time has ended. Game lost.";
-                self.currentTurn = 'none';
+                
+                if (self.currentTurn == 'white') {
+                    clearInterval(self.ongoing);
+                    self.currentTurn = 'none';
+                    self.terminalT.innerHTML = "Your time has ended. Game Set.";
+                    setTimeout(function() {
+                    $.ajax({
+                        url: 'https://hidden-chess-proxy-19df82248288.herokuapp.com/http://52.79.61.17:8080/chess/' + self.gameId + '/movements',
+                        type: 'POST',
+                        data: JSON.stringify({start: [99], 
+                            end: [99], 
+                            userId: self.userId
+                        }),
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        async: false,
+                        complete: function (data) {
+                            if (data.status == 200) {
+                            }
+                        }
+                    });
+                    }, 10);
+                }
+                
             }
             if (self.gamestate == 'play') {
                 self[timer] = self[timer] - 1000;
@@ -93,26 +118,77 @@ var Chessboard = class Chessboard {
         }, 1000);
     }
     pauseTimer() {
-        if (self.gamestate == 'play') self.gamestate = 'paused';
+        if (self.gamestate == 'play') self.gamestate = 'pause';
         else if (self.gamestate == 'pause') self.gamestate = 'play';
     }
-    newGame() {
+    newGame(pvs) {
         self = this
 
         document.getElementsByClassName("piece").remove();
 
-        self.playingVS = $("input[type=radio][name=ngame]:checked").val();
-        self.currentTurn = $("input[type=radio][name=nside]:checked").val();
-        if (self.ongoing)
-             clearInterval(self.ongoing);
-        $('#timerWindow').removeClass('blackTimer');
+        self.playingVS = pvs;
+        if (pvs == 'vsai') self.currentTurn = $("input[type=radio][name=nside]:checked").val();
+        if (self.ongoing) clearInterval(self.ongoing);
         self.whiteTimer = self.timerLength;
         self.blackTimer = self.timerLength;
+        if (pvs == 'vsplayer') {
+            var nickname = prompt("Name?" + "");
+            self.name = nickname;
+            var registered = 0;
+            while (registered == 0) {
+                $.ajax({
+                    url: 'https://hidden-chess-proxy-19df82248288.herokuapp.com/http://52.79.61.17:8080/users/chess',
+                    type: 'POST',
+                    data: JSON.stringify({name: self.name,}),
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    async: false,
+                    complete: function (data) {
+                        if (data.status == 200) {
+                            console.log(data.responseJSON.userId);
+                            self.userId = data.responseJSON.userId;
+                            registered = 1;
+                        }
+                    }
+                });
+            }
+            var matched = 0;
+            while (matched == 0) {
+                $.ajax({
+                    url: 'https://hidden-chess-proxy-19df82248288.herokuapp.com/http://52.79.61.17:8080/matchs/chess',
+                    type: 'POST',
+                    data: JSON.stringify({userId: self.userId,}),
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    async: false,
+                    complete: function (data) {
+                        if (data.status == 200) {
+                            console.log(data.responseJSON.gameId);
+                            self.gameId = data.responseJSON.gameId;
+                            matched = 1;
+                        }
+                    }
+                });
+            }
+        }
         self.terminalT.innerHTML = 'put king piece';
         self.gamestate = 'prep';
         this.startTimer();
         
         boardResize();
+        
+    }
+    clearData() {
+        console.log("Deleting all data from server")
+        $.ajax({
+            url: 'https://hidden-chess-proxy-19df82248288.herokuapp.com/http://52.79.61.17:8080/test/data',
+            type: 'DELETE',
+            async: true,
+            success: function (rdata) {
+                console.log(rdata);
+                console.log("Deleted!");
+            }
+        });
         
     }
     createBoard() {
@@ -153,8 +229,8 @@ var Chessboard = class Chessboard {
         var brook = "img/hidden.png";
         var wbishop = "img/bishop.png";
         var bbishop = "img/hidden.png";
-        var wqueen = "img/mine.png";
-        var bqueen = "img/hidden.png";
+        var wtrap = "img/mine.png";
+        var btrap = "img/hidden.png";
         var wking = "img/king.png";
         var bking = "img/hidden.png";
 
@@ -164,15 +240,15 @@ var Chessboard = class Chessboard {
         var black_rooks = positions.black.rook;
         var white_bishops = positions.white.bishop;
         var black_bishops = positions.black.bishop;
-        var white_queen = positions.white.queen;
-        var black_queen = positions.black.queen;
+        var white_trap = positions.white.trap;
+        var black_trap = positions.black.trap;
         var white_king = positions.white.king;
         var black_king = positions.black.king;
 
         var pawn_prior = 4;
         var rook_prior = 3;
         var bishop_prior = 2;
-        var queen_prior = 1;
+        var trap_prior = 1;
         var king_prior = 5;
 
         for (var x = 0; x < this.row; x++) {
@@ -217,17 +293,17 @@ var Chessboard = class Chessboard {
                     elem.setAttribute("type", "bishop");
                     elem.setAttribute("prior", bishop_prior);
                 }
-                else if (white_queen.indexOf(id) > -1) {
-                    elem.setAttribute("src", wqueen);
+                else if (white_trap.indexOf(id) > -1) {
+                    elem.setAttribute("src", wtrap);
                     elem.setAttribute("side", "white");
-                    elem.setAttribute("type", "queen");
-                    elem.setAttribute("prior", queen_prior);
+                    elem.setAttribute("type", "trap");
+                    elem.setAttribute("prior", trap_prior);
                 }
-                else if (black_queen.indexOf(id) > -1) {
-                    elem.setAttribute("src", bqueen);
+                else if (black_trap.indexOf(id) > -1) {
+                    elem.setAttribute("src", btrap);
                     elem.setAttribute("side", "black");
-                    elem.setAttribute("type", "queen");
-                    elem.setAttribute("prior", queen_prior);
+                    elem.setAttribute("type", "trap");
+                    elem.setAttribute("prior", trap_prior);
                 }
                 else if (white_king.indexOf(id) > -1) {
                     elem.setAttribute("src", wking);
@@ -260,20 +336,20 @@ var Chessboard = class Chessboard {
 
  
     handleSquareClick(e) {
-
+        console.log('aaaaaaaaaa')
         if (self.gamestate == 'prep') {
             if (!e.target.classList.contains('piece') && Number(e.target.getAttribute('id').slice(1)) <= 2) {
                 switch(self.prepPiece) {
                     case 0:
                     var pos = {
                         "white": {
-                            "queen": [""],
+                            "trap": [""],
                             "king": [e.target.getAttribute('id')],
                             "pawn": [""],
                             "bishop": [""],
                             "rook": [""]
                         }, "black": {
-                            "queen": [""],
+                            "trap": [""],
                             "king": [""],
                             "pawn": [""],
                             "bishop": [""],
@@ -288,13 +364,13 @@ var Chessboard = class Chessboard {
                     case 1:
                     var pos = {
                         "white": {
-                            "queen": [""],
+                            "trap": [""],
                             "king": [""],
                             "pawn": [""],
                             "bishop": [""],
                             "rook": [e.target.getAttribute('id')]
                         }, "black": {
-                            "queen": [""],
+                            "trap": [""],
                             "king": [""],
                             "pawn": [""],
                             "bishop": [""],
@@ -309,13 +385,13 @@ var Chessboard = class Chessboard {
                     case 2:
                     var pos = {
                         "white": {
-                            "queen": [""],
+                            "trap": [""],
                             "king": [""],
                             "pawn": [""],
                             "bishop": [e.target.getAttribute('id')],
                             "rook": [""]
                         }, "black": {
-                            "queen": [""],
+                            "trap": [""],
                             "king": [""],
                             "pawn": [""],
                             "bishop": [""],
@@ -330,13 +406,13 @@ var Chessboard = class Chessboard {
                     case 3:
                     var pos = {
                         "white": {
-                            "queen": [""],
+                            "trap": [""],
                             "king": [""],
                             "pawn": [e.target.getAttribute('id')],
                             "bishop": [""],
                             "rook": [""]
                         }, "black": {
-                            "queen": [""],
+                            "trap": [""],
                             "king": [""],
                             "pawn": [""],
                             "bishop": [""],
@@ -351,13 +427,13 @@ var Chessboard = class Chessboard {
                     case 4:
                     var pos = {
                         "white": {
-                            "queen": [e.target.getAttribute('id')],
+                            "trap": [e.target.getAttribute('id')],
                             "king": [""],
                             "pawn": [""],
                             "bishop": [""],
                             "rook": [""]
                         }, "black": {
-                            "queen": [""],
+                            "trap": [""],
                             "king": [""],
                             "pawn": [""],
                             "bishop": [""],
@@ -365,29 +441,88 @@ var Chessboard = class Chessboard {
                         }
                     };
                     self.addPieces(pos);
-                    self.prepPiece = 5;
-                    self.terminalT.innerHTML = self.currentTurn.toUpperCase() + ' is starting';
-                    var opTerritory = ["a5", "b5", "c5", "a4", "b4", "c4"]; /////////////////////////////////////////////////////////////////
-                    var rArr = Array.from({length:6}, (v, i) => i);
-                    rArr.sort(() => Math.random() - 0.5);
-                    var pos = {
-                        "white": {
-                            "queen": [""],
-                            "king": [""],
-                            "pawn": [""],
-                            "bishop": [""],
-                            "rook": [""]
-                        }, "black": {
-                            "queen": [opTerritory[rArr[4]]],
-                            "king": [opTerritory[rArr[0]]],
-                            "pawn": [opTerritory[rArr[3]]],
-                            "bishop": [opTerritory[rArr[2]]],
-                            "rook": [opTerritory[rArr[1]]]
+                    self.prepPiece = 0;
+                    if (self.playingVS == 'vsai') {
+                        self.terminalT.innerHTML = self.currentTurn.toUpperCase() + ' is starting';
+                        var opTerritory = ["a5", "b5", "c5", "a4", "b4", "c4"]; /////////////////////////////////////////////////////////////////
+                        var rArr = Array.from({length:6}, (v, i) => i);
+                        rArr.sort(() => Math.random() - 0.5);
+                        var pos = {
+                            "white": {
+                                "trap": [""],
+                                "king": [""],
+                                "pawn": [""],
+                                "bishop": [""],
+                                "rook": [""]
+                            }, "black": {
+                                "trap": [opTerritory[rArr[4]]],
+                                "king": [opTerritory[rArr[0]]],
+                                "pawn": [opTerritory[rArr[3]]],
+                                "bishop": [opTerritory[rArr[2]]],
+                                "rook": [opTerritory[rArr[1]]]
+                            }
+                        };
+                        self.addPieces(pos);
+                    } else {
+                        var pos = self.convertToJSON();
+                        console.log({piece: pos, userId: self.userId});
+                        setTimeout(function() {
+                        $.ajax({
+                            url: 'https://hidden-chess-proxy-19df82248288.herokuapp.com/http://52.79.61.17:8080/chess/' + self.gameId + '/pieces',
+                            type: 'POST',
+                            data: JSON.stringify({piece: pos, userId: self.userId}),
+                            contentType: 'application/json',
+                            dataType: 'json',
+                            async: false,
+                            complete: function (data) {
+                                if (data.status == 200) {
+                                }
+                            }
+                        });
+                        }, 10);
+                        setTimeout(function() {
+                        var eComp = 0;
+                        while (eComp == 0) {
+                            $.ajax({
+                                url: 'https://hidden-chess-proxy-19df82248288.herokuapp.com/http://52.79.61.17:8080/chess/' + self.gameId + '/pieces?userId=' + self.userId,
+                                type: 'GET',
+                                async: false,
+                                complete: function (data) {
+                                    console.log(data.status);
+                                    if (data.status == 200) {
+                                        console.log(data.responseJSON);
+                                        var pos = {
+                                            "white": {
+                                                "trap": [""],
+                                                "king": [""],
+                                                "pawn": [""],
+                                                "bishop": [""],
+                                                "rook": [""]
+                                            }, "black": {
+                                                "trap": [self.letters[(14 - data.responseJSON.piece.trap[0]) % 3] + (parseInt((14 - data.responseJSON.piece.trap[0]) / 3) + 1).toString()],
+                                                "king": [self.letters[(14 - data.responseJSON.piece.king[0]) % 3] + (parseInt((14 - data.responseJSON.piece.king[0]) / 3) + 1).toString()],
+                                                "pawn": [self.letters[(14 - data.responseJSON.piece.pawn[0]) % 3] + (parseInt((14 - data.responseJSON.piece.pawn[0]) / 3) + 1).toString()],
+                                                "bishop": [self.letters[(14 - data.responseJSON.piece.bishop[0]) % 3] + (parseInt((14 - data.responseJSON.piece.bishop[0]) / 3) + 1).toString()],
+                                                "rook": [self.letters[(14 - data.responseJSON.piece.rook[0]) % 3] + (parseInt((14 - data.responseJSON.piece.rook[0]) / 3) + 1).toString()]
+                                            }
+                                        };
+                                        self.addPieces(pos);
+                                        if (data.responseJSON.sequence == 1) self.currentTurn = "white";
+                                        else self.currentTurn = "black";
+                                        self.terminalT.innerHTML = self.currentTurn.toUpperCase() + ' is starting';
+                                        eComp = 1;
+                                    }
+                                }
+                            });
                         }
-                    };
-                    self.addPieces(pos);
-                    self.gamestate = 'play';
-                    if (self.currentTurn == "black") self.computerMove();
+                        self.gamestate = 'play';
+                        if (self.currentTurn == "black") self.computerMove();
+                        }, 100);
+                    }
+                    if (self.playingvs == 'vsai') {
+                        self.gamestate = 'play';
+                        if (self.currentTurn == "black") self.computerMove();
+                    }
                 }
                 
             }
@@ -408,68 +543,98 @@ var Chessboard = class Chessboard {
         }
 
         else if (e.target.classList.contains('legal') || e.target.parentElement.classList.contains('legal')) {
-                var isAlive = 1;
-                if (e.target.classList.contains('piece') ) {
-                    if (self.clicked_piece.getAttribute("side") != e.target.getAttribute("side")) {
-                        if (e.target.getAttribute("type") != "queen") {
-                            e.target.parentElement.appendChild(self.clicked_piece);
-                            e.target.remove();
-                        }
-                        else {
-                            self.clicked_piece.remove();
-                        }
-
-                        self.elementMoveEnd();
-
-                        var pieces = document.getElementsByClassName("piece");
-                        isAlive = 0;
-
-                        for (var i = 0; i < pieces.length; i++) {
-
-                            if (pieces[i].getAttribute("side") != self.currentTurn && pieces[i].getAttribute("type") == "king") {
-                                isAlive++;
-                            }
-                        }
-
-                        if (isAlive == 0) {
-                            self.terminalT.innerHTML = self.currentTurn.toUpperCase() + ' Player Win!<br>Game Set.'
-                            if (self.ongoing) clearInterval(self.ongoing);
-                        }
-
+            var isEnemyAlive = 1;
+            var isMeAlive = 1;
+            var startId = "";
+            var endId = "";
+            startId = self.clicked_piece.parentElement.getAttribute("id");
+            if (e.target.classList.contains('square')) endId = e.target.getAttribute("id");
+            else endId = e.target.parentElement.getAttribute("id");
+            console.log(startId);
+            console.log(endId);
+            setTimeout(function() {
+            $.ajax({
+                url: 'https://hidden-chess-proxy-19df82248288.herokuapp.com/http://52.79.61.17:8080/chess/' + self.gameId + '/movements',
+                type: 'POST',
+                data: JSON.stringify({start: [self.letters.indexOf(startId[0]) + Number(startId[1]) * 3 - 3], 
+                    end: [self.letters.indexOf(endId[0]) + Number(endId[1]) * 3 - 3], 
+                    userId: self.userId
+                }),
+                contentType: 'application/json',
+                dataType: 'json',
+                async: false,
+                complete: function (data) {
+                    if (data.status == 200) {
+                        self.lastMoved = startId;
                     }
                 }
-                else {
-                    e.target.appendChild(self.clicked_piece);
-                  
-                    self.elementMoveEnd();
-                }
-                if (isAlive) {
-                    if (self.clicked_piece.getAttribute("side") == 'white') {
-                        self.whiteTimer = self.whiteTimer + self.timerIncrease;
-                        self.currentTurn = 'black';
-                        $('#timerWindow').addClass('blackTimer');
+            });
+            }, 10);
+            if (e.target.classList.contains('piece') ) {
+                if (self.clicked_piece.getAttribute("side") != e.target.getAttribute("side")) {
+                    if (e.target.getAttribute("type") != "trap") {
+                        e.target.parentElement.appendChild(self.clicked_piece);
+                        e.target.remove();
                     }
                     else {
-                        self.blackTimer = self.blackTimer + self.timerIncrease;
-                        self.currentTurn = 'white';
-                        $('#timerWindow').removeClass('blackTimer');
+                        self.clicked_piece.remove();
                     }
-                }
-                else {
-                    $('#timerWindow').removeClass('blackTimer');
-                }
-                self.clicked_piece = null;
-                if (isAlive) self.terminalT.innerHTML = self.currentTurn.toUpperCase() + ' TURN';
-                if (isAlive && self.playingVS == 'vsai' && self.currentTurn == 'black'){
-                    self.computerMove();
-                }
 
+                    self.elementMoveEnd();
 
+                    var pieces = document.getElementsByClassName("piece");
+                    isEnemyAlive = 0;
+                    isMeAlive = 0;
+
+                    for (var i = 0; i < pieces.length; i++) {
+
+                        if (pieces[i].getAttribute("side") == "black" && pieces[i].getAttribute("type") == "king") {
+                            isEnemyAlive++;
+                        }
+                        if (pieces[i].getAttribute("side") == "white" && pieces[i].getAttribute("type") == "king") {
+                            isMeAlive++;
+                        }
+                    }
+
+                    if (isEnemyAlive == 0) {
+                        self.terminalT.innerHTML = 'You Win!<br>Game Set.'
+                        if (self.ongoing) clearInterval(self.ongoing);
+                    }
+
+                    if (isMeAlive == 0) {
+                        self.terminalT.innerHTML = 'You Lose.<br>Game Set.'
+                        if (self.ongoing) clearInterval(self.ongoing);
+                    }
+
+                }
             }
             else {
-                console.log('Opposite turn piece or empty square clicked withot legal class.');
+                e.target.appendChild(self.clicked_piece);
+              
+                self.elementMoveEnd();
             }
-        
+            if (isEnemyAlive && isMeAlive) {
+                if (self.clicked_piece.getAttribute("side") == 'white') {
+                    self.whiteTimer = self.whiteTimer + self.timerIncrease;
+                    self.currentTurn = 'black';
+                }
+                else {
+                    self.blackTimer = self.blackTimer + self.timerIncrease;
+                    self.currentTurn = 'white';
+                }
+            }
+            self.clicked_piece = null;
+            if (isEnemyAlive && isMeAlive) self.terminalT.innerHTML = self.currentTurn.toUpperCase() + ' TURN';
+            if (isEnemyAlive && isMeAlive && self.currentTurn == 'black'){
+                self.computerMove();
+            }
+
+
+        }
+        else {
+            console.log('Opposite turn piece or empty square clicked withot legal class.');
+        }
+    
 
     }
 
@@ -556,7 +721,7 @@ var Chessboard = class Chessboard {
             }
             if (cposition != null && cposition.hasChildNodes()) {
 
-                if ((cposition.children[0].getAttribute("side") != ce.children[0].getAttribute("side") && ce.children[0].getAttribute("type") != "queen") || checkMovement) {
+                if ((cposition.children[0].getAttribute("side") != ce.children[0].getAttribute("side") && ce.children[0].getAttribute("type") != "trap") || checkMovement) {
                     cposition.classList.add('legal');
 
 
@@ -694,7 +859,7 @@ var Chessboard = class Chessboard {
             loop_enabler = false;
             bishop_func();
         }
-        if (piece_type == "queen" || piece_type == "king" || piece_type == "pawn") {
+        if (piece_type == "trap" || piece_type == "king" || piece_type == "pawn") {
             loop_enabler = false;
             rook_func();
             i = 1;
@@ -704,13 +869,14 @@ var Chessboard = class Chessboard {
 
 
     }
-    generateJSON() { //Generates JSON file from current positions of the board
+    convertToJSON() { //Generates JSON file from current positions of the board
 
         var positions = {
-            white: {
-            },
-            black: {
-            }
+            bishop: 0,
+            king: 0,
+            pawn: 0,
+            rook: 0,
+            trap: 0
         }
         var squares = document.getElementsByClassName("square");
 
@@ -720,41 +886,57 @@ var Chessboard = class Chessboard {
                 var type = squares[i].children[0].getAttribute("type");
 
                 if (squares[i].children[0].getAttribute("side") == 'white') {
-                    if (!([type] in positions.white)) {
-                        positions.white[type] = [squares[i].id];
-                    }
-                    else {
-                        positions.white[type].push(squares[i].id);
-                    }
-                }
-                else if (squares[i].children[0].getAttribute("side") == 'black') {
-                    if (!([type] in positions.black)) {
-                        positions.black[type] = [squares[i].id];
-                    }
-                    else {
-                        positions.black[type].push(squares[i].id);
-                    }
-                }
-                else {
-                    console.log('Should not happen.');
+                    positions[type] = [this.letters.indexOf(squares[i].id[0]) + Number(squares[i].id[1]) * 3 - 3];
                 }
 
             }
 
 
         }
-
-        var boardJSON = JSON.stringify(positions);
-        console.log(boardJSON);
-        localStorage.setItem("testJSON", boardJSON);
-        return boardJSON;
+        
+        return positions;
 
     }
 
     computerMove() {
-        // var player_data = this.generateJSON();
-
         if (self.currentTurn == 'white') return;
+        console.log('asdf');
+        var eCompp = 0;
+        if (self.playingVS == 'vsplayer') {
+            setTimeout(function() {
+            while (eCompp == 0) {
+                console.log('eCompp');
+                console.log(eCompp);
+                $.ajax({
+                    url: 'https://hidden-chess-proxy-19df82248288.herokuapp.com/http://52.79.61.17:8080/chess/' + self.gameId + '/movements?userId=' + self.userId,
+                    type: 'GET',
+                    async: false,
+                    complete: function (data) {
+                        console.log(data.status);
+                        if (data.status == 200) {
+                            if (data.responseJSON.start[0] == 99 && data.responseJSON.end[0] == 99) {
+                                clearInterval(self.ongoing);
+                                self.currentTurn = 'none';
+                                self.terminalT.innerHTML = "Opponent's time has ended. Game Set.";
+                                eCompp = 1;
+                            }
+                            else if (self.letters[(14 - data.responseJSON.start[0]) % 3] + (parseInt((14 - data.responseJSON.start[0]) / 3) + 1).toString() != self.lastMoved) {
+                                var start = self.letters[(14 - data.responseJSON.start[0]) % 3] + (parseInt((14 - data.responseJSON.start[0]) / 3) + 1).toString();
+                                var end = self.letters[(14 - data.responseJSON.end[0]) % 3] + (parseInt((14 - data.responseJSON.end[0]) / 3) + 1).toString();
+                                console.log(start);
+                                console.log(end);
+                                document.getElementById(start).children[0].click();
+                                if (document.getElementById(end).children[0] == null || document.getElementById(end).children[0] == undefined) document.getElementById(end).click();
+                                else document.getElementById(end).children[0].click();
+                                eCompp = 1;
+                            }
+                        }
+                    }
+                });
+            }
+            }, 10);
+            return;
+        }
 
         setTimeout(function() {
 
@@ -762,7 +944,7 @@ var Chessboard = class Chessboard {
 
         for (var i = 0; i < squares.length; i++) {
             if (squares[i].children[0] !== null && squares[i].children[0] !== undefined) {
-                if (squares[i].children[0].getAttribute("side") == 'white' && squares[i].children[0].getAttribute("type") != 'queen') self.isLegalMove(squares[i], true);
+                if (squares[i].children[0].getAttribute("side") == 'white' && squares[i].children[0].getAttribute("type") != 'trap') self.isLegalMove(squares[i], true);
             }
         }
 
@@ -855,17 +1037,17 @@ var Chessboard = class Chessboard {
         
         
 
-        $.ajax({
+        /*$.ajax({
             url: 'https://hidden-chess-proxy-19df82248288.herokuapp.com/http://52.79.61.17:8080/users/chess',
             type: 'POST',
             data: JSON.stringify({name: "asdfasdf",}),
             contentType: 'application/json',
             dataType: 'json',
             async: true,
-            success: function (rdata) { // Move piece of computer
+            success: function (rdata) {
                 console.log(rdata);
             }
-        });
+        });*/
 
     }
 

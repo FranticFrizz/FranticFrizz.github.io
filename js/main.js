@@ -98,19 +98,19 @@ function boardResize() {
 
         $('#mainChessBoard').width(winWidth * 0.9);
         $('#mainChessBoard').height(winWidth * 0.9 / 3 * 5);
-        $('.square').width(winWidth * 0.9 / 3 - 4);
-        $('.square').height(winWidth * 0.9 / 3 - 4);
-        $('.piece').width(winWidth * 0.9 / 3 - 4);
-        $('.piece').height(winWidth * 0.9 / 3 - 4);
+        $('.square').width(winWidth * 0.9 / 3 - 4.01);
+        $('.square').height(winWidth * 0.9 / 3 - 4.01);
+        $('.piece').width(winWidth * 0.9 / 3 - 4.01);
+        $('.piece').height(winWidth * 0.9 / 3 - 4.01);
 
     } else {
 
         $('#mainChessBoard').width((winHeight - 376) * 0.9 / 5 * 3);
         $('#mainChessBoard').height((winHeight - 376) * 0.9);
-        $('.square').width((winHeight - 376) * 0.9 / 5 - 4);
-        $('.square').height((winHeight - 376) * 0.9 / 5 - 4);
-        $('.piece').width((winHeight - 376) * 0.9 / 5 - 4);
-        $('.piece').height((winHeight - 376) * 0.9 / 5 - 4);
+        $('.square').width((winHeight - 376) * 0.9 / 5 - 4.01);
+        $('.square').height((winHeight - 376) * 0.9 / 5 - 4.01);
+        $('.piece').width((winHeight - 376) * 0.9 / 5 - 4.01);
+        $('.piece').height((winHeight - 376) * 0.9 / 5 - 4.01);
 
     }
 
