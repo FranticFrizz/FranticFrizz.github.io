@@ -123,5 +123,5 @@ window.onload = (event) => {
 
 };
 
-$(window).resize(boardResize());
+$(window).resize(function(){boardResize();});
 
