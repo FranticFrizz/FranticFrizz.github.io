@@ -1,6 +1,6 @@
 window.addEventListener('DOMContentLoaded', function() {
 	const buttonDescriptions = {
-		singlebtn: '싱글플레이',
+		singlebtn: '게임 플레이',
 		multibtn: '멀티플레이',
 		manualbtn: '도움말',
 		modchangebtn: '게임 모드 변경',
