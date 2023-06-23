@@ -128,7 +128,7 @@ var Chessboard = class Chessboard {
         else if (self.gamestate == 'pause') self.gamestate = 'play';
     }
     newGame(pvs) {
-        self = this
+        self = this;
 
         document.getElementsByClassName("piece").remove();
 
