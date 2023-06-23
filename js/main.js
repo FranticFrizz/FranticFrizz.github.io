@@ -120,6 +120,15 @@ window.onload = (event) => {
 
     document.getElementById("sidebar").style.left = "0px";
     boardResize();
+    $.ajax({
+        url: 'https://hidden-chess-proxy-19df82248288.herokuapp.com/http://52.79.61.17:8080/test',
+        type: 'GET',
+        async: true,
+        complete: function (data) {
+            if (data.status == 200) document.getElementById("sStatusText").innerHTML = "Server Status: OK";
+            else document.getElementById("sStatusText").innerHTML = "Server Status: OFFLINE";
+        }
+    });
 
 };
 
