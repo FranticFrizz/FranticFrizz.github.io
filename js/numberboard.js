@@ -572,7 +572,7 @@ var Chessboard = class Chessboard {
             }, 10);
             if (e.target.classList.contains('piece') ) {
                 if (self.clicked_piece.getAttribute("side") != e.target.getAttribute("side")) {
-                    if (e.target.getAttribute("prior") < self.clicked_piece.getAttribute("prior")) {
+                    if (e.target.getAttribute("prior") <= self.clicked_piece.getAttribute("prior")) {
                         if (e.target.getAttribute("prior") < 0) {
                             self.clicked_piece.setAttribute("prior", -self.clicked_piece.getAttribute("prior"));
                             var sImg;
@@ -598,10 +598,10 @@ var Chessboard = class Chessboard {
 
                     for (var i = 0; i < pieces.length; i++) {
 
-                        if (pieces[i].getAttribute("side") == "black" && pieces[i].getAttribute("prior") != 0) {
+                        if (pieces[i].getAttribute("side") == "black" && pieces[i].getAttribute("prior") > 0) {
                             isEnemyAlive++;
                         }
-                        if (pieces[i].getAttribute("side") == "white" && pieces[i].getAttribute("prior") != 0) {
+                        if (pieces[i].getAttribute("side") == "white" && pieces[i].getAttribute("prior") > 0) {
                             isMeAlive++;
                         }
                     }
