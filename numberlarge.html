@@ -4,42 +4,42 @@
     
     <head>
         
+        <title>HIDDENCHESS</title>
         <meta charset="UTF-8">
         <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>NUMBERCHESS</title>
-        <link rel="stylesheet" type="text/css" href="css/style2.css">
-        <link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css">
         <link rel="icon" href="img/fav.png">
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css">
+        <link rel="stylesheet" type="text/css" href="css/style.css">
         
     </head>
     
     <body>
         
-        <div class="background-image"></div>
+        <div class="bg"></div>
         
-        <div id="mySidenav" class="sidenav unselectable">
+        <div id="sidebar" class="sidenav unselectable">
             
-            <a class="closebtn" onclick="closeNav()">&lt;</a>
+            <a class="closebtn" onclick="toggleSidebar()">&lt;</a>
             
-            <a onclick="ngameOpt('#single')">Singleplayer</a>
-            <div id="single" class="single newgame">
+            <a onclick="shrinker('#single')">Singleplayer</a>
+            <div id="single" class="single sidemenu">
                 <form>
-                    White <input type="radio" name="nside" value="white" checked><br>
-                    Black <input type="radio" name="nside" value="black"><br><br>
-                    <input type="button" class="okbutton" onclick="chesstable.newGame('vsai')" value="Start!">
+                    White <input type="radio" name="side" value="white" checked><br>
+                    Black <input type="radio" name="side" value="black"><br><br>
+                    <input type="button" class="okbutton" onclick="chesstable.newGame('single')" value="Start!">
                 </form>
             </div>
             
-            <a onclick="ngameOpt('#multi')">Multiplayer</a>
-            <div id="multi" class="multi newgame">
+            <a onclick="shrinker('#multi')">Multiplayer</a>
+            <div id="multi" class="multi sidemenu">
                 <form>
-                    <input type="button" class="okbutton" onclick="chesstable.newGame('vsplayer')" value="Start!">
+                    <input type="button" class="okbutton" onclick="chesstable.newGame('multi')" value="Start!">
                 </form>
             </div>
             
-            <a onclick="ngameOpt('#settings')">Settings</a>
-            <div id="settings" class="settings newgame" name="difficulty">
+            <a onclick="shrinker('#settings')">Settings</a>
+            <div id="settings" class="settings sidemenu" name="difficulty">
                 <div class="row_wrapper">
                     <span style="float: left !important;">Difficulty: </span>
                     <select id ="StyledSelect" style="display: inline-block !important;">
@@ -52,7 +52,7 @@
                     </select><br>
                 </div>
                 <div class = "row_wrapper">
-                    <span  style="float: left !important;">Timer: </span>
+                    <span  style="float: left !important;">Initial Time: </span>
                     <span id="TimerLength" ></span>
                     <div id="TimerSlider" class="SliderPopUp">
                         <input type="range" min="1" max="120" value="1" class="slider" id="Timer">
@@ -66,13 +66,10 @@
                     </div>
                 </div><br>
                 <input type="button" class="okbutton" onclick="save()" value="Save!">
-                <div class="popup" onclick="togglePopUp()" >
-                    <span class="popuptext" id="myPopup">Settings successfully saved! They will take effect on new game.</span>
-                </div>
             </div>
             
-            <a onclick="ngameOpt('#debug')">Debug</a>
-            <div id="debug" class="debug newgame">
+            <a onclick="shrinker('#debug')">Debug</a>
+            <div id="debug" class="debug sidemenu">
                 <form>
                     <input type="button" class="okbutton" onclick="chesstable.clearData()" value="Clear all data">
                 </form>

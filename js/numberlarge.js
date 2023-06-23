@@ -644,7 +644,7 @@ var Chessboard = class Chessboard {
                         $.ajax({
                             url: 'https://hidden-chess-proxy-19df82248288.herokuapp.com/http://52.79.61.17:8080/number/' + self.gameId + '/pieces',
                             type: 'POST',
-                            data: JSON.stringify({piece: pos, userId: self.userId}),
+                            data: JSON.stringify({nums: pos, userId: self.userId}),
                             contentType: 'application/json',
                             dataType: 'json',
                             async: false,
@@ -670,14 +670,20 @@ var Chessboard = class Chessboard {
                                                 "num1": [""],
                                                 "num2": [""],
                                                 "num3": [""],
+                                                "num4": [""],
+                                                "num5": [""],
                                                 "num0": [""],
-                                                "numminus1": [""]
+                                                "numminus1": [""],
+                                                "numminus2": [""]
                                             }, "black": {
-                                                "num1": [self.letters[(14 - data.responseJSON.nums.num1[0]) % 3] + (parseInt((14 - data.responseJSON.nums.num1[0]) / 3) + 1).toString()],
-                                                "num2": [self.letters[(14 - data.responseJSON.nums.num2[0]) % 3] + (parseInt((14 - data.responseJSON.nums.num2[0]) / 3) + 1).toString()],
-                                                "num3": [self.letters[(14 - data.responseJSON.nums.num3[0]) % 3] + (parseInt((14 - data.responseJSON.nums.num3[0]) / 3) + 1).toString()],
-                                                "num0": [self.letters[(14 - data.responseJSON.nums.num0[0]) % 3] + (parseInt((14 - data.responseJSON.nums.num0[0]) / 3) + 1).toString()],
-                                                "numminus1": [self.letters[(14 - data.responseJSON.nums.numminus1[0]) % 3] + (parseInt((14 - data.responseJSON.nums.numminus1[0]) / 3) + 1).toString()]
+                                                "num1": [self.letters[(23 - data.responseJSON.nums.num1[0]) % 4] + (parseInt((23 - data.responseJSON.nums.num1[0]) / 4) + 1).toString()],
+                                                "num2": [self.letters[(23 - data.responseJSON.nums.num2[0]) % 4] + (parseInt((23 - data.responseJSON.nums.num2[0]) / 4) + 1).toString()],
+                                                "num3": [self.letters[(23 - data.responseJSON.nums.num3[0]) % 4] + (parseInt((23 - data.responseJSON.nums.num3[0]) / 4) + 1).toString()],
+                                                "num4": [self.letters[(23 - data.responseJSON.nums.num4[0]) % 4] + (parseInt((23 - data.responseJSON.nums.num4[0]) / 4) + 1).toString()],
+                                                "num5": [self.letters[(23 - data.responseJSON.nums.num5[0]) % 4] + (parseInt((23 - data.responseJSON.nums.num5[0]) / 4) + 1).toString()],
+                                                "num0": [self.letters[(23 - data.responseJSON.nums.num0[0]) % 4] + (parseInt((23 - data.responseJSON.nums.num0[0]) / 4) + 1).toString()],
+                                                "numminus1": [self.letters[(23 - data.responseJSON.nums.numminus1[0]) % 4] + (parseInt((23 - data.responseJSON.nums.numminus1[0]) / 4) + 1).toString()],
+                                                "numminus2": [self.letters[(23 - data.responseJSON.nums.numminus2[0]) % 4] + (parseInt((23 - data.responseJSON.nums.numminus2[0]) / 4) + 1).toString()]
                                             }
                                         };
                                         self.addPieces(pos);
@@ -730,8 +736,8 @@ var Chessboard = class Chessboard {
             $.ajax({
                 url: 'https://hidden-chess-proxy-19df82248288.herokuapp.com/http://52.79.61.17:8080/number/' + self.gameId + '/movements',
                 type: 'POST',
-                data: JSON.stringify({start: [self.letters.indexOf(startId[0]) + Number(startId[1]) * 3 - 3], 
-                    end: [self.letters.indexOf(endId[0]) + Number(endId[1]) * 3 - 3], 
+                data: JSON.stringify({start: [self.letters.indexOf(startId[0]) + Number(startId[1]) * 4 - 4], 
+                    end: [self.letters.indexOf(endId[0]) + Number(endId[1]) * 4 - 4], 
                     userId: self.userId
                 }),
                 contentType: 'application/json',
@@ -1053,7 +1059,7 @@ var Chessboard = class Chessboard {
                 var type = squares[i].children[0].getAttribute("type");
 
                 if (squares[i].children[0].getAttribute("side") == 'white') {
-                    positions[type] = [this.letters.indexOf(squares[i].id[0]) + Number(squares[i].id[1]) * 3 - 3];
+                    positions[type] = [this.letters.indexOf(squares[i].id[0]) + Number(squares[i].id[1]) * 4 - 4];
                 }
 
             }
@@ -1087,9 +1093,9 @@ var Chessboard = class Chessboard {
                                 self.terminalT.innerHTML = "Opponent's time has ended. Game Set.";
                                 eCompp = 1;
                             }
-                            else if (self.letters[(14 - data.responseJSON.start[0]) % 3] + (parseInt((14 - data.responseJSON.start[0]) / 3) + 1).toString() != self.lastMoved) {
-                                var start = self.letters[(14 - data.responseJSON.start[0]) % 3] + (parseInt((14 - data.responseJSON.start[0]) / 3) + 1).toString();
-                                var end = self.letters[(14 - data.responseJSON.end[0]) % 3] + (parseInt((14 - data.responseJSON.end[0]) / 3) + 1).toString();
+                            else if (self.letters[(23 - data.responseJSON.start[0]) % 4] + (parseInt((23 - data.responseJSON.start[0]) / 4) + 1).toString() != self.lastMoved) {
+                                var start = self.letters[(23 - data.responseJSON.start[0]) % 4] + (parseInt((23 - data.responseJSON.start[0]) / 4) + 1).toString();
+                                var end = self.letters[(23 - data.responseJSON.end[0]) % 4] + (parseInt((23 - data.responseJSON.end[0]) / 4) + 1).toString();
                                 console.log(start);
                                 console.log(end);
                                 document.getElementById(start).children[0].click();

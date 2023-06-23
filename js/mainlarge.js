@@ -5,9 +5,9 @@ Element.prototype.remove = function() { this.parentElement.removeChild(this); }
 NodeList.prototype.remove = function() { for (var i = this.length - 1; i >= 0; i--) if (this[i] && this[i].parentElement) this[i].parentElement.removeChild(this[i]); }
 HTMLCollection.prototype.remove = function() { for (var i = this.length - 1; i >= 0; i--) if (this[i] && this[i].parentElement) this[i].parentElement.removeChild(this[i]); }
 
-function ngameOpt(test) {
+function shrinker(test) {
 
-    var divs = document.getElementsByClassName("newgame");
+    var divs = document.getElementsByClassName("sidemenu");
     for (var i = 0; i < divs.length; i = i + 1) $(divs[i]).slideUp("slow");
 
     if ($(test).css("display") === "none") $(test).slideDown("slow");
@@ -19,11 +19,11 @@ function ngameOpt(test) {
 }
 
 
-function closeNav() {
+function toggleSidebar() {
 
     if (!$(this).data('clicked')) {
 
-        document.getElementById("mySidenav").style.left = "-195px";
+        document.getElementById("sidebar").style.left = "-195px";
 
         var sliders = document.getElementsByClassName('SliderPopUp');
 
@@ -35,7 +35,7 @@ function closeNav() {
 
     } else {
 
-        document.getElementById("mySidenav").style.left = "0px";
+        document.getElementById("sidebar").style.left = "0px";
 
         $(this).click(function() { $(this).data('clicked', false); });
 
@@ -118,7 +118,7 @@ function boardResize() {
 
 window.onload = (event) => {
 
-    document.getElementById("mySidenav").style.left = "0px";
+    document.getElementById("sidebar").style.left = "0px";
     boardResize();
 
 };

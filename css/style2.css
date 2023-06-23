@@ -30,7 +30,7 @@ img.resize {
     width: auto;
     height: auto;
 }
-.background-image:before{
+.bg:before{
     content: "";
     overflow: auto;
     left: 0px;
@@ -43,7 +43,7 @@ img.resize {
     display: block;
     background-repeat: repeat;
 }
-#mySidenav.sidenav {
+#sidebar.sidenav {
     height: 500px;
     width: 250px;
     position: fixed;
@@ -124,7 +124,7 @@ img.resize {
     transition: 0.3s;
     cursor: pointer;
 }
-.newgame, #ngopt {
+.sidemenu, #ngopt {
     padding: 8px 70px 8px 60px;
     text-decoration: none;
     text-align: right;
@@ -160,10 +160,10 @@ img.resize {
     cursor: pointer;
     outline: none !important;
 }
-#settings.settings.newgame {
+#settings.settings.sidemenu {
     padding: 8px 70px 8px 35px !important;
 }
-.settings.newgame select {
+.settings.sidemenu select {
     -webkit-appearance: none;
     -moz-appearance: none;
     text-align: right !important;
@@ -177,7 +177,7 @@ img.resize {
     cursor: pointer;
 }
 
-.settings.newgame option:checked {
+.settings.sidemenu option:checked {
     box-shadow: 10px 10px 10px 10px #111 inset;
     border: 0;
     color: #111 !important;
@@ -185,13 +185,13 @@ img.resize {
 }
 
 
-.settings.newgame option:hover {
+.settings.sidemenu option:hover {
     text-decoration: underline;
     cursor: pointer;
     outline: none !important;
 }
 
-.settings.newgame select::-ms-expand {
+.settings.sidemenu select::-ms-expand {
     display: none;
 }
 .row_wrapper {

@@ -5,7 +5,7 @@ var Chessboard = class Chessboard {
         this.width = boardCol * 100;
         this.row = boardRow;
         this.col = boardCol;
-        this.playingVS = 'vsai';
+        this.playingVS = 'single';
 
 
         this.initialPos = {
@@ -127,11 +127,11 @@ var Chessboard = class Chessboard {
         document.getElementsByClassName("piece").remove();
 
         self.playingVS = pvs;
-        if (pvs == 'vsai') self.currentTurn = $("input[type=radio][name=nside]:checked").val();
+        if (pvs == 'single') self.currentTurn = $("input[type=radio][name=side]:checked").val();
         if (self.ongoing) clearInterval(self.ongoing);
         self.whiteTimer = self.timerLength;
         self.blackTimer = self.timerLength;
-        if (pvs == 'vsplayer') {
+        if (pvs == 'multi') {
             var nickname = prompt("Name?" + "");
             self.name = nickname;
             var registered = 0;
@@ -442,7 +442,7 @@ var Chessboard = class Chessboard {
                     };
                     self.addPieces(pos);
                     self.prepPiece = 0;
-                    if (self.playingVS == 'vsai') {
+                    if (self.playingVS == 'single') {
                         self.terminalT.innerHTML = self.currentTurn.toUpperCase() + ' is starting';
                         var opTerritory = ["a5", "b5", "c5", "a4", "b4", "c4"]; /////////////////////////////////////////////////////////////////
                         var rArr = Array.from({length:6}, (v, i) => i);
@@ -519,7 +519,7 @@ var Chessboard = class Chessboard {
                         if (self.currentTurn == "black") self.computerMove();
                         }, 100);
                     }
-                    if (self.playingVS == 'vsai') {
+                    if (self.playingVS == 'single') {
                         self.gamestate = 'play';
                         if (self.currentTurn == "black") self.computerMove();
                     }
@@ -552,7 +552,7 @@ var Chessboard = class Chessboard {
             else endId = e.target.parentElement.getAttribute("id");
             console.log(startId);
             console.log(endId);
-            if (self.playingVS == 'vsplayer') setTimeout(function() {
+            if (self.playingVS == 'multi') setTimeout(function() {
             $.ajax({
                 url: 'https://hidden-chess-proxy-19df82248288.herokuapp.com/http://52.79.61.17:8080/chess/' + self.gameId + '/movements',
                 type: 'POST',
@@ -902,7 +902,7 @@ var Chessboard = class Chessboard {
         if (self.currentTurn == 'white') return;
         console.log('asdf');
         var eCompp = 0;
-        if (self.playingVS == 'vsplayer') {
+        if (self.playingVS == 'multi') {
             setTimeout(function() {
             while (eCompp == 0) {
                 console.log('eCompp');
